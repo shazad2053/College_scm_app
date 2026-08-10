@@ -114,9 +114,12 @@ class ExamsPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Examinations & Marks", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        notebook = ttk.Notebook(self)
+        ttk.Label(card, text="Examinations & Marks", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        notebook = ttk.Notebook(card)
         notebook.pack(fill="both", expand=True)
 
         self.exams_tab = ttk.Frame(notebook, padding=15)

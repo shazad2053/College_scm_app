@@ -21,16 +21,19 @@ class ReportsPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Reports", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        notebook = ttk.Notebook(self)
+        ttk.Label(card, text="Reports", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        notebook = ttk.Notebook(card)
         notebook.pack(fill="both", expand=True)
 
-        self.tab_students = ttk.Frame(notebook, padding=15)
-        self.tab_attendance = ttk.Frame(notebook, padding=15)
-        self.tab_fee = ttk.Frame(notebook, padding=15)
-        self.tab_exam = ttk.Frame(notebook, padding=15)
-        self.tab_teacher = ttk.Frame(notebook, padding=15)
+        self.tab_students = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.tab_attendance = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.tab_fee = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.tab_exam = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.tab_teacher = ttk.Frame(notebook, padding=15, style="Card.TFrame")
 
         notebook.add(self.tab_students, text="Student Reports")
         notebook.add(self.tab_attendance, text="Attendance Reports")

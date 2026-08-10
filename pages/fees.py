@@ -32,14 +32,17 @@ class FeesPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Fee Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        notebook = ttk.Notebook(self)
+        ttk.Label(card, text="Fee Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        notebook = ttk.Notebook(card)
         notebook.pack(fill="both", expand=True)
 
-        self.structure_tab = ttk.Frame(notebook, padding=15)
-        self.collection_tab = ttk.Frame(notebook, padding=15)
-        self.challan_tab = ttk.Frame(notebook, padding=15)
+        self.structure_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.collection_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.challan_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
 
         notebook.add(self.structure_tab, text="Fee Structure")
         notebook.add(self.collection_tab, text="Fee Collection")
@@ -56,19 +59,19 @@ class FeesPage(ttk.Frame):
         conn.close()
         self.fs_class_map = {f"{c['class_name']} - {c['section'] or ''}".strip(" -"): c["id"] for c in classes}
 
-        form = ttk.Frame(tab)
-        form.pack(fill="x")
+        form = ttk.Frame(tab, style="Card.TFrame", padding=12)
+        form.pack(fill="x", pady=(0, 10))
 
-        ttk.Label(form, text="Class:").grid(row=0, column=0, sticky="w", pady=6)
-        self.fs_class_combo = ttk.Combobox(form, values=list(self.fs_class_map.keys()), width=22, state="readonly")
+        ttk.Label(form, text="Class:", style="Form.TLabel").grid(row=0, column=0, sticky="w", pady=6)
+        self.fs_class_combo = ttk.Combobox(form, values=list(self.fs_class_map.keys()), width=22, state="readonly", style="Form.TCombobox")
         self.fs_class_combo.grid(row=0, column=1, pady=6, padx=6)
         self.fs_class_combo.bind("<<ComboboxSelected>>", lambda e: self.load_fee_structure())
 
         labels = ["Admission Fee", "Monthly Fee", "Exam Fee", "Annual Charges", "Misc Fee"]
         self.fs_entries = {}
         for i, label in enumerate(labels):
-            ttk.Label(form, text=label + ":").grid(row=i + 1, column=0, sticky="w", pady=6)
-            e = ttk.Entry(form, width=20)
+            ttk.Label(form, text=label + ":", style="Form.TLabel").grid(row=i + 1, column=0, sticky="w", pady=6)
+            e = ttk.Entry(form, width=20, style="Form.TEntry")
             e.grid(row=i + 1, column=1, pady=6, padx=6)
             self.fs_entries[label] = e
 
@@ -156,34 +159,34 @@ class FeesPage(ttk.Frame):
         conn.close()
         self.fc_student_map = {f"{s['name']} (Roll: {s['roll_no'] or '-'})": s["id"] for s in students}
 
-        form = ttk.Frame(tab)
-        form.pack(fill="x")
+        form = ttk.Frame(tab, style="Card.TFrame", padding=12)
+        form.pack(fill="x", pady=(0, 10))
 
-        ttk.Label(form, text="Student:").grid(row=0, column=0, sticky="w", pady=6)
-        self.fc_student_combo = ttk.Combobox(form, values=list(self.fc_student_map.keys()), width=30, state="readonly")
+        ttk.Label(form, text="Student:", style="Form.TLabel").grid(row=0, column=0, sticky="w", pady=6)
+        self.fc_student_combo = ttk.Combobox(form, values=list(self.fc_student_map.keys()), width=30, state="readonly", style="Form.TCombobox")
         self.fc_student_combo.grid(row=0, column=1, pady=6, padx=6)
 
-        ttk.Label(form, text="Month:").grid(row=1, column=0, sticky="w", pady=6)
-        self.fc_month_entry = ttk.Entry(form, width=10)
+        ttk.Label(form, text="Month:", style="Form.TLabel").grid(row=1, column=0, sticky="w", pady=6)
+        self.fc_month_entry = ttk.Entry(form, width=10, style="Form.TEntry")
         self.fc_month_entry.insert(0, datetime.now().strftime("%m"))
         self.fc_month_entry.grid(row=1, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Year:").grid(row=2, column=0, sticky="w", pady=6)
-        self.fc_year_entry = ttk.Entry(form, width=10)
+        ttk.Label(form, text="Year:", style="Form.TLabel").grid(row=2, column=0, sticky="w", pady=6)
+        self.fc_year_entry = ttk.Entry(form, width=10, style="Form.TEntry")
         self.fc_year_entry.insert(0, datetime.now().strftime("%Y"))
         self.fc_year_entry.grid(row=2, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Amount:").grid(row=3, column=0, sticky="w", pady=6)
-        self.fc_amount_entry = ttk.Entry(form, width=15)
+        ttk.Label(form, text="Amount:", style="Form.TLabel").grid(row=3, column=0, sticky="w", pady=6)
+        self.fc_amount_entry = ttk.Entry(form, width=15, style="Form.TEntry")
         self.fc_amount_entry.grid(row=3, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Discount:").grid(row=4, column=0, sticky="w", pady=6)
-        self.fc_discount_entry = ttk.Entry(form, width=15)
+        ttk.Label(form, text="Discount:", style="Form.TLabel").grid(row=4, column=0, sticky="w", pady=6)
+        self.fc_discount_entry = ttk.Entry(form, width=15, style="Form.TEntry")
         self.fc_discount_entry.insert(0, "0")
         self.fc_discount_entry.grid(row=4, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Fine:").grid(row=5, column=0, sticky="w", pady=6)
-        self.fc_fine_entry = ttk.Entry(form, width=15)
+        ttk.Label(form, text="Fine:", style="Form.TLabel").grid(row=5, column=0, sticky="w", pady=6)
+        self.fc_fine_entry = ttk.Entry(form, width=15, style="Form.TEntry")
         self.fc_fine_entry.insert(0, "0")
         self.fc_fine_entry.grid(row=5, column=1, sticky="w", pady=6)
 
@@ -312,29 +315,29 @@ class FeesPage(ttk.Frame):
         conn.close()
         self.ch_student_map = {f"{s['name']} (Roll: {s['roll_no'] or '-'})": s["id"] for s in students}
 
-        form = ttk.Frame(tab)
-        form.pack(fill="x")
+        form = ttk.Frame(tab, style="Card.TFrame", padding=12)
+        form.pack(fill="x", pady=(0, 10))
 
-        ttk.Label(form, text="Student:").grid(row=0, column=0, sticky="w", pady=6)
-        self.ch_student_combo = ttk.Combobox(form, values=list(self.ch_student_map.keys()), width=30, state="readonly")
+        ttk.Label(form, text="Student:", style="Form.TLabel").grid(row=0, column=0, sticky="w", pady=6)
+        self.ch_student_combo = ttk.Combobox(form, values=list(self.ch_student_map.keys()), width=30, state="readonly", style="Form.TCombobox")
         self.ch_student_combo.grid(row=0, column=1, pady=6, padx=6)
 
-        ttk.Label(form, text="Month:").grid(row=1, column=0, sticky="w", pady=6)
-        self.ch_month_entry = ttk.Entry(form, width=10)
+        ttk.Label(form, text="Month:", style="Form.TLabel").grid(row=1, column=0, sticky="w", pady=6)
+        self.ch_month_entry = ttk.Entry(form, width=10, style="Form.TEntry")
         self.ch_month_entry.insert(0, datetime.now().strftime("%m"))
         self.ch_month_entry.grid(row=1, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Year:").grid(row=2, column=0, sticky="w", pady=6)
-        self.ch_year_entry = ttk.Entry(form, width=10)
+        ttk.Label(form, text="Year:", style="Form.TLabel").grid(row=2, column=0, sticky="w", pady=6)
+        self.ch_year_entry = ttk.Entry(form, width=10, style="Form.TEntry")
         self.ch_year_entry.insert(0, datetime.now().strftime("%Y"))
         self.ch_year_entry.grid(row=2, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Amount:").grid(row=3, column=0, sticky="w", pady=6)
-        self.ch_amount_entry = ttk.Entry(form, width=15)
+        ttk.Label(form, text="Amount:", style="Form.TLabel").grid(row=3, column=0, sticky="w", pady=6)
+        self.ch_amount_entry = ttk.Entry(form, width=15, style="Form.TEntry")
         self.ch_amount_entry.grid(row=3, column=1, sticky="w", pady=6)
 
-        ttk.Label(form, text="Due Date (YYYY-MM-DD):").grid(row=4, column=0, sticky="w", pady=6)
-        self.ch_due_entry = ttk.Entry(form, width=15)
+        ttk.Label(form, text="Due Date (YYYY-MM-DD):", style="Form.TLabel").grid(row=4, column=0, sticky="w", pady=6)
+        self.ch_due_entry = ttk.Entry(form, width=15, style="Form.TEntry")
         self.ch_due_entry.insert(0, today_str())
         self.ch_due_entry.grid(row=4, column=1, sticky="w", pady=6)
 

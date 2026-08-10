@@ -112,9 +112,12 @@ class ClassesPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Class Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        toolbar = ttk.Frame(self)
+        ttk.Label(card, text="Class Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        toolbar = ttk.Frame(card, style="Card.TFrame")
         toolbar.pack(fill="x", pady=(0, 10))
         ttk.Button(toolbar, text="+ Add Class", style="Accent.TButton", command=self.add_class).pack(side="left")
         ttk.Button(toolbar, text="Edit", command=self.edit_class).pack(side="left", padx=6)
@@ -123,7 +126,7 @@ class ClassesPage(ttk.Frame):
         columns = ("id", "session", "class_name", "section", "teacher")
         headers = ["ID", "Session", "Class", "Section", "Class Teacher"]
         widths = [40, 100, 150, 100, 160]
-        self.tree = ttk.Treeview(self, columns=columns, show="headings", height=18)
+        self.tree = ttk.Treeview(card, columns=columns, show="headings", height=18)
         for c, h, wd in zip(columns, headers, widths):
             self.tree.heading(c, text=h)
             self.tree.column(c, width=wd, anchor="w")

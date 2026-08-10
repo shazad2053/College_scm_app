@@ -133,9 +133,12 @@ class TeachersPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Teacher Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        toolbar = ttk.Frame(self)
+        ttk.Label(card, text="Teacher Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        toolbar = ttk.Frame(card, style="Card.TFrame")
         toolbar.pack(fill="x", pady=(0, 10))
         ttk.Button(toolbar, text="+ Add Teacher", style="Accent.TButton",
                    command=self.add_teacher).pack(side="left")
@@ -143,16 +146,16 @@ class TeachersPage(ttk.Frame):
         ttk.Button(toolbar, text="Delete", style="Danger.TButton",
                    command=self.delete_teacher).pack(side="left", padx=6)
 
-        ttk.Label(toolbar, text="Search:").pack(side="left", padx=(30, 6))
+        ttk.Label(toolbar, text="Search:", style="Muted.TLabel").pack(side="left", padx=(30, 6))
         self.search_var = tk.StringVar()
-        entry = ttk.Entry(toolbar, textvariable=self.search_var, width=25)
+        entry = ttk.Entry(toolbar, textvariable=self.search_var, width=25, style="Search.TEntry")
         entry.pack(side="left")
         entry.bind("<KeyRelease>", lambda e: self.refresh_list())
 
         columns = ("id", "code", "name", "subject", "qualification", "mobile", "salary", "status")
         headers = ["ID", "Code", "Name", "Subject", "Qualification", "Mobile", "Salary", "Status"]
         widths = [40, 80, 150, 110, 130, 100, 80, 70]
-        self.tree = ttk.Treeview(self, columns=columns, show="headings", height=18)
+        self.tree = ttk.Treeview(card, columns=columns, show="headings", height=18)
         for c, h, wd in zip(columns, headers, widths):
             self.tree.heading(c, text=h)
             self.tree.column(c, width=wd, anchor="w")

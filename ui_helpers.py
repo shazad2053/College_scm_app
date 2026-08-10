@@ -65,6 +65,12 @@ def configure_styles(root):
               background=[("!disabled", "#f3f4f6"), ("active", "#e5e7eb")],
               foreground=[("!disabled", COLOR_TEXT)])
 
+    style.configure("Form.TEntry", padding=8)
+    style.configure("Form.TCombobox", padding=8)
+    style.configure("Form.TLabel", background=COLOR_CARD, foreground=COLOR_TEXT, font=FONT_NORMAL)
+    style.configure("CardTitle.TLabel", background=COLOR_CARD, foreground=COLOR_TEXT,
+                    font=("Segoe UI", 14, "bold"))
+
     style.configure("TButton", font=FONT_NORMAL, padding=6)
     style.configure("Search.TEntry", fieldbackground="#ffffff", background="#ffffff",
                     bordercolor="#d1d5db", lightcolor="#d1d5db", darkcolor="#d1d5db",

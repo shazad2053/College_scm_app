@@ -89,7 +89,7 @@ class SchoolManagementApp(tk.Tk):
             font=("Segoe UI", 13, "bold"), wraplength=190, justify="left"
         ).pack(anchor="w")
         tk.Label(
-            header, text="Management System", bg=COLOR_SIDEBAR, fg="#9ca3af",
+            header, text="College Management System", bg=COLOR_SIDEBAR, fg="#9ca3af",
             font=("Segoe UI", 9)
         ).pack(anchor="w")
 

@@ -20,9 +20,12 @@ class ResultsPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Result Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        top = ttk.Frame(self)
+        ttk.Label(card, text="Result Management", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        top = ttk.Frame(card, style="Card.TFrame")
         top.pack(fill="x", pady=(0, 10))
 
         conn = get_connection()
@@ -33,8 +36,8 @@ class ResultsPage(ttk.Frame):
         conn.close()
         self.exam_map = {f"{e['exam_name']} ({e['exam_type']}) - {e['class_name']}": e["id"] for e in exams}
 
-        ttk.Label(top, text="Exam:").pack(side="left")
-        self.exam_combo = ttk.Combobox(top, values=list(self.exam_map.keys()), width=32, state="readonly")
+        ttk.Label(top, text="Exam:", style="Form.TLabel").pack(side="left")
+        self.exam_combo = ttk.Combobox(top, values=list(self.exam_map.keys()), width=32, state="readonly", style="Form.TCombobox")
         self.exam_combo.pack(side="left", padx=6)
 
         ttk.Button(top, text="Generate Merit / Position List", style="Accent.TButton",
@@ -45,13 +48,13 @@ class ResultsPage(ttk.Frame):
         columns = ("position", "id", "name", "obtained", "total", "percentage")
         headers = ["Position", "ID", "Name", "Marks Obtained", "Total Marks", "Percentage"]
         widths = [70, 50, 180, 110, 100, 90]
-        self.tree = ttk.Treeview(self, columns=columns, show="headings", height=18)
+        self.tree = ttk.Treeview(card, columns=columns, show="headings", height=18)
         for c, h, w in zip(columns, headers, widths):
             self.tree.heading(c, text=h)
             self.tree.column(c, width=w, anchor="w")
         self.tree.pack(fill="both", expand=True)
 
-        ttk.Button(self, text="Print Merit List", command=self.print_merit_list).pack(anchor="w", pady=(10, 0))
+        ttk.Button(card, text="Print Merit List", command=self.print_merit_list).pack(anchor="w", pady=(10, 0))
 
     def _compute_results(self, exam_id):
         conn = get_connection()

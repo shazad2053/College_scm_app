@@ -26,19 +26,19 @@ class UserForm(tk.Toplevel):
         self.transient(master)
         self.grab_set()
 
-        form = ttk.Frame(self, padding=20)
+        form = ttk.Frame(self, style="Card.TFrame", padding=20)
         form.pack(fill="both", expand=True)
 
-        ttk.Label(form, text="Username").grid(row=0, column=0, sticky="w", pady=6)
-        self.username_entry = ttk.Entry(form, width=22)
+        ttk.Label(form, text="Username", style="Form.TLabel").grid(row=0, column=0, sticky="w", pady=6)
+        self.username_entry = ttk.Entry(form, width=22, style="Form.TEntry")
         self.username_entry.grid(row=0, column=1, pady=6)
 
-        ttk.Label(form, text="Password").grid(row=1, column=0, sticky="w", pady=6)
-        self.password_entry = ttk.Entry(form, width=22, show="*")
+        ttk.Label(form, text="Password", style="Form.TLabel").grid(row=1, column=0, sticky="w", pady=6)
+        self.password_entry = ttk.Entry(form, width=22, show="*", style="Form.TEntry")
         self.password_entry.grid(row=1, column=1, pady=6)
 
-        ttk.Label(form, text="Role").grid(row=2, column=0, sticky="w", pady=6)
-        self.role_combo = ttk.Combobox(form, values=ROLES, width=19, state="readonly")
+        ttk.Label(form, text="Role", style="Form.TLabel").grid(row=2, column=0, sticky="w", pady=6)
+        self.role_combo = ttk.Combobox(form, values=ROLES, width=19, state="readonly", style="Form.TCombobox")
         self.role_combo.set("Viewer")
         self.role_combo.grid(row=2, column=1, pady=6)
 
@@ -101,14 +101,17 @@ class SettingsPage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Settings", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        notebook = ttk.Notebook(self)
+        ttk.Label(card, text="Settings", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        notebook = ttk.Notebook(card)
         notebook.pack(fill="both", expand=True)
 
-        self.tab_school = ttk.Frame(notebook, padding=15)
-        self.tab_users = ttk.Frame(notebook, padding=15)
-        self.tab_backup = ttk.Frame(notebook, padding=15)
+        self.tab_school = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.tab_users = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.tab_backup = ttk.Frame(notebook, padding=15, style="Card.TFrame")
 
         notebook.add(self.tab_school, text="School Info & Session")
         notebook.add(self.tab_users, text="Users & Roles")
@@ -120,23 +123,23 @@ class SettingsPage(ttk.Frame):
 
     # ---------------- School Info ----------------
     def build_school_tab(self, tab):
-        ttk.Label(tab, text="School / College Name").grid(row=0, column=0, sticky="w", pady=8)
-        self.name_entry = ttk.Entry(tab, width=40)
+        ttk.Label(tab, text="School / College Name", style="Form.TLabel").grid(row=0, column=0, sticky="w", pady=8)
+        self.name_entry = ttk.Entry(tab, width=40, style="Form.TEntry")
         self.name_entry.insert(0, get_setting("school_name"))
         self.name_entry.grid(row=0, column=1, pady=8, padx=10)
 
-        ttk.Label(tab, text="Address").grid(row=1, column=0, sticky="w", pady=8)
-        self.address_entry = ttk.Entry(tab, width=40)
+        ttk.Label(tab, text="Address", style="Form.TLabel").grid(row=1, column=0, sticky="w", pady=8)
+        self.address_entry = ttk.Entry(tab, width=40, style="Form.TEntry")
         self.address_entry.insert(0, get_setting("school_address"))
         self.address_entry.grid(row=1, column=1, pady=8, padx=10)
 
-        ttk.Label(tab, text="Phone").grid(row=2, column=0, sticky="w", pady=8)
-        self.phone_entry = ttk.Entry(tab, width=40)
+        ttk.Label(tab, text="Phone", style="Form.TLabel").grid(row=2, column=0, sticky="w", pady=8)
+        self.phone_entry = ttk.Entry(tab, width=40, style="Form.TEntry")
         self.phone_entry.insert(0, get_setting("school_phone"))
         self.phone_entry.grid(row=2, column=1, pady=8, padx=10)
 
-        ttk.Label(tab, text="Current Academic Session").grid(row=3, column=0, sticky="w", pady=8)
-        self.session_entry = ttk.Entry(tab, width=40)
+        ttk.Label(tab, text="Current Academic Session", style="Form.TLabel").grid(row=3, column=0, sticky="w", pady=8)
+        self.session_entry = ttk.Entry(tab, width=40, style="Form.TEntry")
         self.session_entry.insert(0, get_setting("current_session"))
         self.session_entry.grid(row=3, column=1, pady=8, padx=10)
 
@@ -218,21 +221,26 @@ class SettingsPage(ttk.Frame):
 
     # ---------------- Backup & Restore ----------------
     def build_backup_tab(self, tab):
-        ttk.Label(tab, text="Backup", font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(0, 6))
-        ttk.Label(tab, text="Save a copy of the entire database (school.db) to a location of your choice.").pack(
+        section = ttk.Frame(tab, style="Card.TFrame", padding=12)
+        section.pack(fill="x", pady=(0, 10))
+        ttk.Label(section, text="Backup", style="CardTitle.TLabel").pack(anchor="w", pady=(0, 6))
+        ttk.Label(section, text="Save a copy of the entire database (school.db) to a location of your choice.", style="Form.TLabel").pack(
             anchor="w", pady=(0, 6)
         )
-        ttk.Button(tab, text="Backup Database", style="Accent.TButton", command=self.backup_db).pack(anchor="w", pady=(0, 20))
+        ttk.Button(section, text="Backup Database", style="Accent.TButton", command=self.backup_db).pack(anchor="w", pady=(0, 20))
 
         ttk.Separator(tab, orient="horizontal").pack(fill="x", pady=10)
 
-        ttk.Label(tab, text="Restore", font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(0, 6))
+        section2 = ttk.Frame(tab, style="Card.TFrame", padding=12)
+        section2.pack(fill="x")
+        ttk.Label(section2, text="Restore", style="CardTitle.TLabel").pack(anchor="w", pady=(0, 6))
         ttk.Label(
-            tab,
+            section2,
             text="Restore the database from a previously saved backup file.\n"
                  "Warning: this will overwrite all current data.",
+            style="Form.TLabel",
         ).pack(anchor="w", pady=(0, 6))
-        ttk.Button(tab, text="Restore Database", style="Danger.TButton", command=self.restore_db).pack(anchor="w")
+        ttk.Button(section2, text="Restore Database", style="Danger.TButton", command=self.restore_db).pack(anchor="w")
 
     def backup_db(self):
         path = filedialog.asksaveasfilename(

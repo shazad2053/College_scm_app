@@ -41,19 +41,24 @@ class StudentForm(tk.Toplevel):
         self.transient(master)
         self.grab_set()
 
+        self.geometry("640x720")
         wrapper = ScrollableFrame(self)
         wrapper.pack(fill="both", expand=True)
-        form = wrapper.scrollable_frame
-        form.configure(padding=20)
+        card = ttk.Frame(wrapper.scrollable_frame, style="Card.TFrame", padding=24)
+        card.pack(fill="both", expand=True, padx=10, pady=10)
+
+        ttk.Label(card, text="Add Student" if not student_id else "Edit Student",
+                  style="CardTitle.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
+        ttk.Separator(card, orient="horizontal").grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 18))
 
         self.fields = {}
 
         def add_field(label, row, widget_type="entry", values=None):
-            ttk.Label(form, text=label).grid(row=row, column=0, sticky="w", pady=6, padx=(0, 10))
+            ttk.Label(card, text=label, style="Form.TLabel").grid(row=row, column=0, sticky="w", pady=6, padx=(0, 16))
             if widget_type == "entry":
-                w = ttk.Entry(form, width=32)
+                w = ttk.Entry(card, width=36, style="Form.TEntry")
             elif widget_type == "combo":
-                w = ttk.Combobox(form, values=values, width=29, state="readonly")
+                w = ttk.Combobox(card, values=values, width=34, state="readonly", style="Form.TCombobox")
             w.grid(row=row, column=1, sticky="w", pady=6)
             self.fields[label] = w
             return w
@@ -82,19 +87,19 @@ class StudentForm(tk.Toplevel):
         add_field("Status", 14, "combo", STATUSES)
 
         # Photo picker
-        ttk.Label(form, text="Student Photo").grid(row=15, column=0, sticky="w", pady=6)
-        photo_row = ttk.Frame(form)
+        ttk.Label(card, text="Student Photo", style="Form.TLabel").grid(row=15, column=0, sticky="w", pady=6, padx=(0, 16))
+        photo_row = ttk.Frame(card, style="Card.TFrame")
         photo_row.grid(row=15, column=1, sticky="w")
-        ttk.Entry(photo_row, textvariable=self.photo_path_var, width=22, state="readonly").pack(side="left")
-        ttk.Button(photo_row, text="Browse", command=self.pick_photo).pack(side="left", padx=4)
+        ttk.Entry(photo_row, textvariable=self.photo_path_var, width=26, state="readonly", style="Form.TEntry").pack(side="left")
+        ttk.Button(photo_row, text="Browse", style="Secondary.TButton", command=self.pick_photo).pack(side="left", padx=6)
 
         self.fields["Admission Date (YYYY-MM-DD)"].insert(0, today_str())
         self.fields["Status"].set("Active")
 
-        btn_row = ttk.Frame(form)
-        btn_row.grid(row=16, column=0, columnspan=2, pady=20)
+        btn_row = ttk.Frame(card, style="Card.TFrame")
+        btn_row.grid(row=16, column=0, columnspan=2, pady=24)
         ttk.Button(btn_row, text="Save", style="Accent.TButton", command=self.save).pack(side="left", padx=6)
-        ttk.Button(btn_row, text="Cancel", command=self.destroy).pack(side="left", padx=6)
+        ttk.Button(btn_row, text="Cancel", style="Secondary.TButton", command=self.destroy).pack(side="left", padx=6)
 
         if student_id:
             self.load_existing()

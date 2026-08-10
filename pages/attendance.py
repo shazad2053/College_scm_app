@@ -24,15 +24,18 @@ class AttendancePage(ttk.Frame):
         for w in self.winfo_children():
             w.destroy()
 
-        ttk.Label(self, text="Attendance", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+        card = ttk.Frame(self, style="Card.TFrame", padding=20)
+        card.pack(fill="both", expand=True)
 
-        notebook = ttk.Notebook(self)
+        ttk.Label(card, text="Attendance", style="Title.TLabel").pack(anchor="w", pady=(0, 15))
+
+        notebook = ttk.Notebook(card)
         notebook.pack(fill="both", expand=True)
 
-        self.student_daily_tab = ttk.Frame(notebook, padding=15)
-        self.student_report_tab = ttk.Frame(notebook, padding=15)
-        self.teacher_daily_tab = ttk.Frame(notebook, padding=15)
-        self.teacher_report_tab = ttk.Frame(notebook, padding=15)
+        self.student_daily_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.student_report_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.teacher_daily_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
+        self.teacher_report_tab = ttk.Frame(notebook, padding=15, style="Card.TFrame")
 
         notebook.add(self.student_daily_tab, text="Student - Daily Attendance")
         notebook.add(self.student_report_tab, text="Student - Monthly Report")
@@ -46,11 +49,11 @@ class AttendancePage(ttk.Frame):
 
     # ---------------- Student Daily ----------------
     def build_student_daily(self, tab):
-        top = ttk.Frame(tab)
-        top.pack(fill="x", pady=(0, 10))
+        top = ttk.Frame(tab, style="Card.TFrame")
+        top.pack(fill="x", pady=(0, 10), padx=4)
 
-        ttk.Label(top, text="Date (YYYY-MM-DD):").pack(side="left")
-        self.sd_date_entry = ttk.Entry(top, width=14)
+        ttk.Label(top, text="Date (YYYY-MM-DD):", style="Form.TLabel").pack(side="left")
+        self.sd_date_entry = ttk.Entry(top, width=14, style="Form.TEntry")
         self.sd_date_entry.insert(0, today_str())
         self.sd_date_entry.pack(side="left", padx=6)
 
@@ -59,13 +62,13 @@ class AttendancePage(ttk.Frame):
         conn.close()
         self.sd_class_map = {f"{c['class_name']} - {c['section'] or ''}".strip(" -"): c["id"] for c in classes}
 
-        ttk.Label(top, text="Class:").pack(side="left", padx=(20, 6))
-        self.sd_class_combo = ttk.Combobox(top, values=list(self.sd_class_map.keys()), width=20, state="readonly")
+        ttk.Label(top, text="Class:", style="Form.TLabel").pack(side="left", padx=(20, 6))
+        self.sd_class_combo = ttk.Combobox(top, values=list(self.sd_class_map.keys()), width=20, state="readonly", style="Form.TCombobox")
         self.sd_class_combo.pack(side="left")
 
         ttk.Button(top, text="Load Students", style="Accent.TButton",
                    command=self.load_students_for_attendance).pack(side="left", padx=10)
-        ttk.Button(top, text="Save Attendance", command=self.save_student_attendance).pack(side="left")
+        ttk.Button(top, text="Save Attendance", style="Secondary.TButton", command=self.save_student_attendance).pack(side="left")
 
         columns = ("id", "name", "roll", "status")
         self.sd_tree = ttk.Treeview(tab, columns=columns, show="headings", height=16)
@@ -75,7 +78,7 @@ class AttendancePage(ttk.Frame):
         self.sd_tree.pack(fill="both", expand=True)
         self.sd_tree.bind("<Double-1>", self.cycle_status)
 
-        ttk.Label(tab, text="Tip: double-click a row to cycle Present → Absent → Leave").pack(anchor="w", pady=(6, 0))
+        ttk.Label(tab, text="Tip: double-click a row to cycle Present → Absent → Leave", style="Muted.TLabel").pack(anchor="w", pady=(6, 0))
 
     def load_students_for_attendance(self):
         class_name = self.sd_class_combo.get()
@@ -133,17 +136,17 @@ class AttendancePage(ttk.Frame):
 
     # ---------------- Student Monthly Report ----------------
     def build_student_report(self, tab):
-        top = ttk.Frame(tab)
-        top.pack(fill="x", pady=(0, 10))
+        top = ttk.Frame(tab, style="Card.TFrame")
+        top.pack(fill="x", pady=(0, 10), padx=4)
         now = datetime.now()
 
-        ttk.Label(top, text="Month (1-12):").pack(side="left")
-        self.sr_month_entry = ttk.Entry(top, width=6)
+        ttk.Label(top, text="Month (1-12):", style="Form.TLabel").pack(side="left")
+        self.sr_month_entry = ttk.Entry(top, width=6, style="Form.TEntry")
         self.sr_month_entry.insert(0, str(now.month))
         self.sr_month_entry.pack(side="left", padx=6)
 
-        ttk.Label(top, text="Year:").pack(side="left", padx=(10, 6))
-        self.sr_year_entry = ttk.Entry(top, width=8)
+        ttk.Label(top, text="Year:", style="Form.TLabel").pack(side="left", padx=(10, 6))
+        self.sr_year_entry = ttk.Entry(top, width=8, style="Form.TEntry")
         self.sr_year_entry.insert(0, str(now.year))
         self.sr_year_entry.pack(side="left")
 
