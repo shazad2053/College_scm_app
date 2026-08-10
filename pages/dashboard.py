@@ -27,7 +27,7 @@ class DashboardPage(ttk.Frame):
         conn = get_connection()
         cur = conn.cursor()
 
-        total_students = cur.execute("SELECT COUNT(*) c FROM students WHERE status='Active'").fetchone()["c"]
+        total_students = cur.execute("SELECT COUNT(*) c FROM students").fetchone()["c"]
         total_teachers = cur.execute("SELECT COUNT(*) c FROM teachers WHERE status='Active'").fetchone()["c"]
         total_classes = cur.execute("SELECT COUNT(*) c FROM classes").fetchone()["c"]
 
