@@ -8,17 +8,17 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 
 # ---------------- Color / Style Palette ----------------
-COLOR_SIDEBAR = "#1f2937"
-COLOR_SIDEBAR_ACTIVE = "#374151"
-COLOR_SIDEBAR_TEXT = "#e5e7eb"
-COLOR_BG = "#f3f4f6"
+COLOR_SIDEBAR = "#0f172a"
+COLOR_SIDEBAR_ACTIVE = "#1f2937"
+COLOR_SIDEBAR_TEXT = "#e2e8f0"
+COLOR_BG = "#eff6ff"
 COLOR_CARD = "#ffffff"
-COLOR_ACCENT = "#2563eb"
-COLOR_ACCENT_DARK = "#1d4ed8"
-COLOR_DANGER = "#dc2626"
+COLOR_ACCENT = "#4338ca"
+COLOR_ACCENT_DARK = "#3730a3"
+COLOR_DANGER = "#ef4444"
 COLOR_SUCCESS = "#16a34a"
 COLOR_TEXT = "#111827"
-COLOR_MUTED = "#6b7280"
+COLOR_MUTED = "#475569"
 
 FONT_TITLE = ("Segoe UI", 18, "bold")
 FONT_SUBTITLE = ("Segoe UI", 12, "bold")
@@ -35,7 +35,7 @@ def configure_styles(root):
         pass
 
     style.configure("TFrame", background=COLOR_BG)
-    style.configure("Card.TFrame", background=COLOR_CARD)
+    style.configure("Card.TFrame", background=COLOR_CARD, borderwidth=0, relief="flat")
     style.configure("Sidebar.TFrame", background=COLOR_SIDEBAR)
 
     style.configure("TLabel", background=COLOR_BG, foreground=COLOR_TEXT, font=FONT_NORMAL)
@@ -49,12 +49,12 @@ def configure_styles(root):
     style.configure("SidebarTitle.TLabel", background=COLOR_SIDEBAR, foreground="#ffffff",
                     font=("Segoe UI", 13, "bold"))
 
-    style.configure("Accent.TButton", font=FONT_BOLD, padding=8)
+    style.configure("Accent.TButton", font=FONT_BOLD, padding=10, background=COLOR_ACCENT, foreground="#ffffff")
     style.map("Accent.TButton",
               background=[("!disabled", COLOR_ACCENT), ("active", COLOR_ACCENT_DARK)],
               foreground=[("!disabled", "#ffffff")])
 
-    style.configure("Danger.TButton", font=FONT_BOLD, padding=8)
+    style.configure("Danger.TButton", font=FONT_BOLD, padding=10, background=COLOR_DANGER, foreground="#ffffff")
     style.map("Danger.TButton",
               background=[("!disabled", COLOR_DANGER), ("active", COLOR_DANGER)],
               foreground=[("!disabled", "#ffffff")])
@@ -72,13 +72,13 @@ def configure_styles(root):
                     font=("Segoe UI", 14, "bold"))
 
     style.configure("TButton", font=FONT_NORMAL, padding=6)
-    style.configure("Search.TEntry", fieldbackground="#ffffff", background="#ffffff",
-                    bordercolor="#d1d5db", lightcolor="#d1d5db", darkcolor="#d1d5db",
-                    padding=6)
+    style.configure("Search.TEntry", fieldbackground="#f8fafc", background="#f8fafc",
+                    bordercolor="#cbd5e1", lightcolor="#cbd5e1", darkcolor="#cbd5e1",
+                    padding=8)
 
-    style.configure("Treeview", font=FONT_NORMAL, rowheight=26, background="#ffffff",
-                    fieldbackground="#ffffff")
-    style.configure("Treeview.Heading", font=FONT_BOLD, background="#e5e7eb")
+    style.configure("Treeview", font=FONT_NORMAL, rowheight=28, background="#f8fafc",
+                    fieldbackground="#f8fafc", bordercolor="#e2e8f0", relief="flat")
+    style.configure("Treeview.Heading", font=FONT_BOLD, background="#e2e8f0", foreground=COLOR_TEXT)
     style.map("Treeview", background=[("selected", COLOR_ACCENT)], foreground=[("selected", "#ffffff")])
 
     style.configure("TNotebook", background=COLOR_BG)

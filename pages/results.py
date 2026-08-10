@@ -45,9 +45,9 @@ class ResultsPage(ttk.Frame):
         ttk.Button(top, text="View Result Card (selected student)",
                    command=self.view_result_card).pack(side="left", padx=6)
 
-        columns = ("position", "id", "name", "obtained", "total", "percentage")
-        headers = ["Position", "ID", "Name", "Marks Obtained", "Total Marks", "Percentage"]
-        widths = [70, 50, 180, 110, 100, 90]
+        columns = ("position", "id", "name", "obtained", "total", "percentage", "status")
+        headers = ["Position", "ID", "Name", "Marks Obtained", "Total Marks", "Percentage", "Status"]
+        widths = [70, 50, 180, 110, 100, 90, 90]
         self.tree = ttk.Treeview(card, columns=columns, show="headings", height=18)
         for c, h, w in zip(columns, headers, widths):
             self.tree.heading(c, text=h)
@@ -73,7 +73,15 @@ class ResultsPage(ttk.Frame):
             obtained = sum(r["marks_obtained"] for r in rows)
             total = sum(r["total_marks"] for r in rows)
             pct = (obtained / total * 100) if total else 0
-            results.append({"id": s["id"], "name": s["name"], "obtained": obtained, "total": total, "pct": pct})
+            status = "Fail" if pct <= 29.9 else "Pass"
+            results.append({
+                "id": s["id"],
+                "name": s["name"],
+                "obtained": obtained,
+                "total": total,
+                "pct": pct,
+                "status": status,
+            })
         conn.close()
 
         results.sort(key=lambda r: r["pct"], reverse=True)
@@ -101,7 +109,10 @@ class ResultsPage(ttk.Frame):
         for r in self.current_results:
             self.tree.insert(
                 "", "end",
-                values=(r["position"], r["id"], r["name"], r["obtained"], r["total"], f"{r['pct']:.2f}%"),
+                values=(
+                    r["position"], r["id"], r["name"], r["obtained"], r["total"],
+                    f"{r['pct']:.2f}%", r["status"]
+                ),
             )
 
     def view_result_card(self):
@@ -110,7 +121,7 @@ class ResultsPage(ttk.Frame):
             warn("Please generate the merit list and select a student row first.")
             return
         vals = self.tree.item(sel[0])["values"]
-        position, sid, name, obtained, total, pct = vals
+        position, sid, name, obtained, total, pct, status = vals
 
         conn = get_connection()
         exam_display = self.exam_combo.get()
@@ -143,6 +154,7 @@ class ResultsPage(ttk.Frame):
 
         ttk.Label(frame, text=f"Total: {obtained} / {total}   ({pct})",
                   font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(10, 0))
+        ttk.Label(frame, text=f"Status: {pct < 30 and 'Fail' or 'Pass'}", font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(4, 0))
         ttk.Button(frame, text="Close", command=win.destroy).pack(pady=15)
 
     def print_merit_list(self):
@@ -153,7 +165,7 @@ class ResultsPage(ttk.Frame):
         lines = [f"MERIT / POSITION LIST", f"Exam: {exam_display}", "=" * 50]
         for r in self.current_results:
             lines.append(
-                f"{r['position']:>3}. {r['name']:<25} {r['obtained']:>6}/{r['total']:<6} {r['pct']:.2f}%"
+                f"{r['position']:>3}. {r['name']:<20} {r['obtained']:>5}/{r['total']:<5} {r['pct']:.2f}%  {r['status']}"
             )
         content = "\n".join(lines)
 

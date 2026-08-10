@@ -208,15 +208,15 @@ class ExamsPage(ttk.Frame):
                    command=self.load_students_for_marks).pack(side="left", padx=10)
         ttk.Button(top, text="Save Marks", command=self.save_marks).pack(side="left")
 
-        columns = ("id", "name", "obtained", "total")
+        columns = ("id", "name", "obtained", "total", "percentage")
         self.marks_tree = ttk.Treeview(tab, columns=columns, show="headings", height=16)
-        for c, h, w in zip(columns, ["Student ID", "Name", "Marks Obtained", "Total Marks"], [80, 200, 120, 100]):
+        for c, h, w in zip(columns, ["Student ID", "Name", "Marks Obtained", "Total Marks", "Percentage"], [80, 200, 120, 100, 100]):
             self.marks_tree.heading(c, text=h)
             self.marks_tree.column(c, width=w, anchor="w")
         self.marks_tree.pack(fill="both", expand=True)
         self.marks_tree.bind("<Double-1>", self.edit_marks_cell)
 
-        ttk.Label(tab, text="Tip: double-click a row to enter marks obtained / total marks").pack(
+        ttk.Label(tab, text="Tip: double-click a row to enter marks obtained, total marks, and percentage").pack(
             anchor="w", pady=(6, 0)
         )
 
@@ -263,9 +263,9 @@ class ExamsPage(ttk.Frame):
             "SELECT id, name FROM students WHERE class_id=? AND status='Active'", (class_id,)
         ).fetchall()
         existing = {
-            r["student_id"]: (r["marks_obtained"], r["total_marks"])
+            r["student_id"]: (r["marks_obtained"], r["total_marks"], r["percentage"])
             for r in conn.execute(
-                "SELECT student_id, marks_obtained, total_marks FROM marks WHERE exam_id=? AND subject_id=?",
+                "SELECT student_id, marks_obtained, total_marks, percentage FROM marks WHERE exam_id=? AND subject_id=?",
                 (exam_id, subject_id),
             ).fetchall()
         }
@@ -274,8 +274,10 @@ class ExamsPage(ttk.Frame):
         for row in self.marks_tree.get_children():
             self.marks_tree.delete(row)
         for s in students:
-            obtained, total = existing.get(s["id"], (0, 100))
-            self.marks_tree.insert("", "end", values=(s["id"], s["name"], obtained, total))
+            obtained, total, pct = existing.get(s["id"], (0, 100, 0))
+            if pct is None:
+                pct = (obtained / total * 100) if total else 0
+            self.marks_tree.insert("", "end", values=(s["id"], s["name"], obtained, total, pct))
 
     def edit_marks_cell(self, event):
         sel = self.marks_tree.selection()
@@ -300,15 +302,40 @@ class ExamsPage(ttk.Frame):
         total_entry.insert(0, str(vals[3]))
         total_entry.pack()
 
+        ttk.Label(popup, text="Percentage:").pack(pady=(10, 4))
+        percentage_var = tk.StringVar(value=str(vals[4] if len(vals) > 4 else 0))
+        percentage_entry = ttk.Entry(popup, textvariable=percentage_var, state="readonly")
+        percentage_entry.pack()
+
+        def update_percentage(event=None):
+            try:
+                obtained = float(obtained_entry.get())
+                total = float(total_entry.get())
+                if total:
+                    percentage_var.set(f"{obtained / total * 100:.2f}")
+                else:
+                    percentage_var.set("0.00")
+            except ValueError:
+                percentage_var.set("0.00")
+
+        obtained_entry.bind("<KeyRelease>", update_percentage)
+        total_entry.bind("<KeyRelease>", update_percentage)
+        update_percentage()
+
         def apply():
             try:
                 obtained = float(obtained_entry.get())
                 total = float(total_entry.get())
+                percentage = float(percentage_var.get())
             except ValueError:
                 warn("Please enter valid numbers.")
                 return
             vals[2] = obtained
             vals[3] = total
+            if len(vals) > 4:
+                vals[4] = percentage
+            else:
+                vals.append(percentage)
             self.marks_tree.item(item, values=vals)
             popup.destroy()
 
@@ -325,13 +352,15 @@ class ExamsPage(ttk.Frame):
 
         conn = get_connection()
         for item in self.marks_tree.get_children():
-            sid, name, obtained, total = self.marks_tree.item(item)["values"]
+            sid, name, obtained, total, percentage = self.marks_tree.item(item)["values"]
             conn.execute(
-                """INSERT INTO marks (exam_id, student_id, subject_id, marks_obtained, total_marks)
-                   VALUES (?, ?, ?, ?, ?)
+                """INSERT INTO marks (exam_id, student_id, subject_id, marks_obtained, total_marks, percentage)
+                   VALUES (?, ?, ?, ?, ?, ?)
                    ON CONFLICT(exam_id, student_id, subject_id)
-                   DO UPDATE SET marks_obtained=excluded.marks_obtained, total_marks=excluded.total_marks""",
-                (exam_id, sid, subject_id, obtained, total),
+                   DO UPDATE SET marks_obtained=excluded.marks_obtained,
+                                 total_marks=excluded.total_marks,
+                                 percentage=excluded.percentage""",
+                (exam_id, sid, subject_id, obtained, total, percentage),
             )
         conn.commit()
         conn.close()

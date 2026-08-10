@@ -23,6 +23,12 @@ def get_connection():
     return conn
 
 
+def add_column_if_not_exists(conn, table, column, definition):
+    existing = [row["name"] for row in conn.execute(f"PRAGMA table_info({table})").fetchall()]
+    if column not in existing:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+
 def init_db():
     """Create all tables if they do not already exist."""
     conn = get_connection()
@@ -185,12 +191,14 @@ def init_db():
             subject_id INTEGER NOT NULL,
             marks_obtained REAL DEFAULT 0,
             total_marks REAL DEFAULT 100,
+            percentage REAL DEFAULT 0,
             FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE,
             FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
             FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
             UNIQUE(exam_id, student_id, subject_id)
         )
     """)
+    add_column_if_not_exists(conn, "marks", "percentage", "REAL DEFAULT 0")
 
     # ---------------- Users (login / roles) ----------------
     cur.execute("""
